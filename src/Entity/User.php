@@ -5,12 +5,13 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="users")
  */
-class User implements PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     /**
      * @ORM\Id
@@ -154,5 +155,22 @@ class User implements PasswordAuthenticatedUserInterface
           'town'            => $this->town,
           'country'         => $this->country,
         ];
+    }
+
+    public function getRoles(): array
+    {
+        return [
+            'ROLE_USER'
+        ];
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getId();
     }
 }

@@ -10,10 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class LoginUserController extends AbstractController
 {
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository, private readonly TokenStorageInterface $tokenStorage)
     {
     }
 
@@ -28,7 +30,7 @@ class LoginUserController extends AbstractController
      *     description="User data",
      *     required=true,
      *     @OA\JsonContent(
-     *         @OA\Property(property="email", type="string", description="User's email address. Required. Must be a valid email.", example="example22@gmail.com"),
+     *         @OA\Property(property="email", type="string", description="User's email address. Requi`red. Must be a valid email.", example="example22@gmail.com"),
      *         @OA\Property(property="password", type="string", description="User's password.", example="Qwerty123#"),
      *     )
      * )
@@ -50,6 +52,10 @@ class LoginUserController extends AbstractController
         if (!$passwordHasher->isPasswordValid($user, $data['password'])) {
             return new JsonResponse(['message' => 'Invalid password'], 422);
         }
+
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+
+        $this->tokenStorage->setToken($token);
 
         return new JsonResponse([], 204);
     }
