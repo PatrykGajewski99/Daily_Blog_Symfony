@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use App\ValueObject\CountryNames;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -57,20 +58,27 @@ class UserRegisterType extends AbstractType
                     new Assert\NotBlank(
                         message: 'Country field is required'
                     ),
-                    new Assert\Choice(callback: [CountryNames::class , 'getAllowedValues'])
+                    new Assert\Choice(
+                        callback: [CountryNames::class , 'getAllowedValues'],
+                        message: 'This county name is not allowed.'
+                    )
                 ],
             ])
             ->add("town", TextType::class, [])
-            ->add("password", PasswordType::class, [
+            ->add("password", RepeatedType::class, [
+                'type'        => PasswordType::class,
                 'constraints' => [
                     new Assert\NotBlank(
-                        message: 'Town field is required'
+                        message: 'Password field is required'
                     ),
                     new Assert\Length(
                         min: 8,
                         minMessage: 'The password must be at least 8 characters long',
-                    )
+                    ),
                 ],
+                'first_options'      => ['label' => 'password'],
+                'second_options'     => ['label' => 'password_confirmation'],
+                'invalid_message'    => 'Password and password confirmation not have the same value',
             ]);
     }
 
