@@ -1,20 +1,24 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
 use App\Form\UserRegisterType;
-use App\ValueObject\CountryNames;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Annotations as OA;
-use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Annotations as OA;
 
 class RegisterUserController extends AbstractController
 {
+    public function __construct(private readonly UserService $userService)
+    {
+    }
+
     /**
      * Register user
      *
@@ -56,13 +60,9 @@ class RegisterUserController extends AbstractController
         $form->submit($data);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->userService->register($user, $entityManager, $passwordHasher);
 
-            $user->setPassword($passwordHasher->hashPassword($user, $_ENV['PASSWORD_PLAINTEXT']));
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return new JsonResponse($user, 201);
+            return new JsonResponse(['user' => $user->serialize()], 201);
         }
 
         $errors = [];
