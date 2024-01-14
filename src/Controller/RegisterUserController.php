@@ -26,18 +26,18 @@ class RegisterUserController extends AbstractController
      *     description="User data",
      *     required=true,
      *     @OA\JsonContent(
-     *         @OA\Property(property="first_name", type="string", description="User's first name. Required."),
-     *         @OA\Property(property="last_name", type="string", description="User's last name. Required."),
-     *         @OA\Property(property="phone_number", type="string", description="User's phone number. Required. Must be between 9 and 13 characters."),
-     *         @OA\Property(property="email", type="string", description="User's email address. Required. Must be a valid email."),
-     *         @OA\Property(property="country", type="string", description="User's country. Required. Must be one of the allowed values: Poland, Germany, Spain, Portugal."),
-     *         @OA\Property(property="town", type="string", description="User's town."),
+     *         @OA\Property(property="first_name", type="string", description="User's first name. Required.", example="Patryk"),
+     *         @OA\Property(property="last_name", type="string", description="User's last name. Required.", example="Gajewski"),
+     *         @OA\Property(property="phone_number", type="string", description="User's phone number. Required. Must be between 9 and 13 characters.", example="777878727"),
+     *         @OA\Property(property="email", type="string", description="User's email address. Required. Must be a valid email.", example="example22@gmail.com"),
+     *         @OA\Property(property="country", type="string", description="User's country. Required. Must be one of the allowed values.", example="Poland"),
+     *         @OA\Property(property="town", type="string", example="Warsaw"),
      *         @OA\Property(
      *             property="password",
      *             type="object",
      *             description="User's password and password confirmation.",
-     *             @OA\Property(property="first", type="string", description="User's password. Required. Must be at least 8 characters long."),
-     *             @OA\Property(property="second", type="string", description="User's password confirmation. Required. Must match the password."),
+     *             @OA\Property(property="first", type="string", description="User's password. Required. Must be at least 8 characters long.", example="YourPassword123"),
+     *             @OA\Property(property="second", type="string", description="User's password confirmation. Required. Must match the password.", example="YourPassword123"),
      *         ),
      *     )
      * )
