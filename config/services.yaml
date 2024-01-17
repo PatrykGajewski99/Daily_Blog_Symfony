@@ -6,6 +6,16 @@
 parameters:
 
 services:
+    App\Service\UserService:
+        arguments:
+            $userRepository: '@App\Repository\UserRepository'
+            $entityManager: '@doctrine.orm.entity_manager'
+            $jwtTokenManager: '@Lexik\Bundle\JWTAuthenticationBundle\Service\JWTTokenManagerInterface'
+    App\Service\PostService:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $formFactory: '@form.factory'
+            $serializer: '@Symfony\Component\Serializer\SerializerInterface'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

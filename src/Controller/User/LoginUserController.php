@@ -4,18 +4,17 @@ namespace App\Controller\User;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class LoginUserController extends AbstractController
 {
-    public function __construct(private readonly UserRepository $userRepository, private readonly TokenStorageInterface $tokenStorage)
+    public function __construct(private readonly UserRepository $userRepository, private readonly JWTTokenManagerInterface $jwtTokenManager)
     {
     }
 
@@ -53,10 +52,10 @@ class LoginUserController extends AbstractController
             return new JsonResponse(['message' => 'Invalid password'], 422);
         }
 
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        $token = $this->jwtTokenManager->create($user);
 
-        $this->tokenStorage->setToken($token);
-
-        return new JsonResponse([], 204);
+        return new JsonResponse([
+            'token' => $token
+        ], 201);
     }
 }

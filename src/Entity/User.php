@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -54,6 +56,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private string $password;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Post::class, orphanRemoval: true)]
+    private Collection $sts;
+
+    public function __construct()
+    {
+        $this->sts = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -172,5 +182,35 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getUserIdentifier(): string
     {
         return $this->getId();
+    }
+
+    /**
+     * @return Collection<int, Post>
+     */
+    public function getSts(): Collection
+    {
+        return $this->sts;
+    }
+
+    public function addSt(Post $st): static
+    {
+        if (!$this->sts->contains($st)) {
+            $this->sts->add($st);
+            $st->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSt(Post $st): static
+    {
+        if ($this->sts->removeElement($st)) {
+            // set the owning side to null (unless already changed)
+            if ($st->getUserId() === $this) {
+                $st->setUserId(null);
+            }
+        }
+
+        return $this;
     }
 }
