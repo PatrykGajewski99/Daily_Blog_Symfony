@@ -44,7 +44,9 @@ class EditPostController extends AbstractController
         $user = $this->userService->getUserFromToken($request->headers->get('Authorization'));
 
         if ($post->getUser()->getUserIdentifier() !== $user->getUserIdentifier()) {
-            return new JsonResponse(['error' => 'You can not edit other customers posts.']);
+            return new JsonResponse([
+                'error' => 'You can not edit other customers posts.',
+            ], 422);
         }
 
        return $this->postService->update($post, $request->getContent());

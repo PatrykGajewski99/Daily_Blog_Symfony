@@ -57,6 +57,16 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
      */
     private string $password;
 
+    /**
+     * @ORM\Column(nullable=true)
+     */
+    private ?\DateTimeImmutable $created_at = null;
+
+    /**
+     * @ORM\Column(nullable=true)
+     */
+    private ?\DateTimeImmutable $updated_at = null;
+
     #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Post::class, orphanRemoval: true)]
     private Collection $sts;
 
@@ -210,6 +220,30 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
                 $st->setUserId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(): static
+    {
+        $this->created_at = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(): static
+    {
+        $this->updated_at = new \DateTimeImmutable();
 
         return $this;
     }

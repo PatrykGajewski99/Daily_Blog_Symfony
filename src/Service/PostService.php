@@ -57,7 +57,7 @@ class PostService
 
                 $this->entityManager->flush();
 
-                return new JsonResponse(['message' => $post->serialize()], 200);
+                return new JsonResponse(['post' => $post->serialize()], 200);
             } catch (NotEncodableValueException $e) {
                 return new JsonResponse(['error' => 'Invalid JSON data'], JsonResponse::HTTP_BAD_REQUEST);
             }

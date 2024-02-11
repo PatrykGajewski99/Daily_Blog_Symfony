@@ -39,13 +39,13 @@ final class UserFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'country' => self::faker()->text(64),
-            'email' => self::faker()->text(64),
-            'town'  => self::faker()->text(64),
-            'first_name' => self::faker()->text(64),
-            'last_name' => self::faker()->text(64),
-            'password' => self::faker()->text(255),
-            'phone_number' => self::faker()->text(12),
+            'country'       => CountryNames::PORTUGAL->value,
+            'email'         => self::faker()->email(64),
+            'town'          => self::faker()->city(64),
+            'first_name'    => self::faker()->firstName(64),
+            'last_name'     => self::faker()->lastName(64),
+            'password'      => self::faker()->password(64),
+            'phone_number'  => self::faker()->numberBetween(600000000,900000000),
         ];
     }
 
