@@ -17,6 +17,7 @@ class UserService
     public function register(User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): User
     {
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+        $user->setCreatedAt();
 
         $entityManager->persist($user);
         $entityManager->flush();
