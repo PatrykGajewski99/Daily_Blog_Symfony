@@ -42,8 +42,13 @@ class CreatePostController extends AbstractController
     public function index(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        $token = $request->headers->get('Authorization');
 
-        $user = $this->userService->getUserFromToken($request->headers->get('Authorization'));
+        if (!$token) {
+            return new JsonResponse(['errors' => 'Can not create post like not logged user'], 422);
+        }
+
+        $user = $this->userService->getUserFromToken($token);
 
         $post = $this->postService->create($user, $data);
 

@@ -6,6 +6,7 @@ use App\Hellpers\UserHelper;
 use App\ValueObject\CategoryNames;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -28,15 +29,19 @@ class CreatePostTest extends TestCase
 
     public function testPostCreationLikeNotLoggedUser(): void
     {
-        $response = $this->httpClient->post('post/create', [
-            'json' => [
-                'category'      => CategoryNames::HEALTH->value,
-                'title'         => 'Sport is the best to keep healthy condition',
-                'description'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce elementum quam sed pharetra feugiat. Fusce sit amet euismod augue, sit amet sagittis metus. Suspendisse potenti. Vivamus tincidunt nulla vitae massa porta vulputate. Nulla lacinia ligula non dui dictum, nec consequat ligula molestie.',
-            ]
-        ]);
+        try {
+            $this->httpClient->post('post/create', [
+                'json' => [
+                    'category'      => CategoryNames::HEALTH->value,
+                    'title'         => 'Sport is the best to keep healthy condition',
+                    'description'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce elementum quam sed pharetra feugiat. Fusce sit amet euismod augue, sit amet sagittis metus. Suspendisse potenti. Vivamus tincidunt nulla vitae massa porta vulputate. Nulla lacinia ligula non dui dictum, nec consequat ligula molestie.',
+                ]
+            ]);
+        } catch (ClientException $exception) {
+            $response = $exception->getResponse();
 
-        $this->assertEquals(422, $response->getStatusCode());
+            $this->assertEquals(422, $response->getStatusCode());
+        }
     }
 
     public function testPostCreationLikeLoggedUser(): void

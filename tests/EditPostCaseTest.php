@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Hellpers\PostHelper;
 use App\Hellpers\UserHelper;
 use App\ValueObject\CategoryNames;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,25 +36,18 @@ class EditPostCaseTest extends TestCase
         $firstUserLoginToken = UserHelper::loginUser($firstUser, $this->httpClient);
         $secondUserLoginToken = UserHelper::loginUser($secondUser, $this->httpClient);
 
-        $response = $this->httpClient->post('post/create', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $firstUserLoginToken,
-            ],
-            'json' => [
-                'category'      => CategoryNames::HEALTH->value,
-                'title'         => 'Sport is the best to keep healthy condition',
-                'description'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce elementum quam sed pharetra feugiat. Fusce sit amet euismod augue, sit amet sagittis metus. Suspendisse potenti. Vivamus tincidunt nulla vitae massa porta vulputate. Nulla lacinia ligula non dui dictum, nec consequat ligula molestie.',
-            ]
-        ]);
+        $post = PostHelper::create(
+            $this->httpClient,
+            $firstUserLoginToken,
+            CategoryNames::HEALTH->value,
+            'Sport is the best to keep healthy condition',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce elementum quam sed pharetra feugiat. Fusce sit amet euismod augue, sit amet sagittis metus. Suspendisse potenti. Vivamus tincidunt nulla vitae massa porta vulputate. Nulla lacinia ligula non dui dictum, nec consequat ligula molestie.'
+        );
 
-        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertEquals('Sport is the best to keep healthy condition', $post['title']);
+        $this->assertEquals(CategoryNames::HEALTH->value, $post['category']);
 
-        $data = json_decode($response->getBody()->getContents(), true)['post'];
-
-        $this->assertEquals('Sport is the best to keep healthy condition', $data['title']);
-        $this->assertEquals(CategoryNames::HEALTH->value, $data['category']);
-
-        $response = $this->httpClient->put('post/' . $data['id'] . '/edit', [
+        $response = $this->httpClient->put('post/' . $post['id'] . '/edit', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $firstUserLoginToken,
             ],
