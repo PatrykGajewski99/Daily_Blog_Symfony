@@ -48,7 +48,7 @@ class CreatePostController extends AbstractController
         $post = $this->postService->create($user, $data);
 
         return $post instanceof Post
-            ? new JsonResponse(['post'      => $post->serialize()], 201)
-            : new JsonResponse(['errors'    => $post], 422);
+            ? new JsonResponse(['post'   => $post->serialize()], 201)
+            : new JsonResponse(['errors' => $post], 422);
     }
 }

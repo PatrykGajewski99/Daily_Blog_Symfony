@@ -13,9 +13,7 @@ use OpenApi\Annotations as OA;
 
 class EditPostController extends AbstractController
 {
-    public function __construct(private readonly UserService $userService, private readonly PostService $postService)
-    {
-
+    public function __construct(private readonly UserService $userService, private readonly PostService $postService){
     }
 
     /**

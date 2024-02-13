@@ -12,10 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class GetPostController extends AbstractController
 {
-    public function __construct(private readonly UserService $userService)
-    {
-    }
-
     /**
      * Get post
      *
@@ -29,12 +25,6 @@ class GetPostController extends AbstractController
      */
     public function index(Post $post, Request $request): JsonResponse
     {
-        $user = $this->userService->getUserFromToken($request->headers->get('Authorization'));
-
-        if ($post->getUser()->getUserIdentifier() !== $user->getUserIdentifier()) {
-            return new JsonResponse(['error' => 'You can not delete other customers posts.']);
-        }
-
         return new JsonResponse(['post' => $post->serialize()], 200);
     }
 }

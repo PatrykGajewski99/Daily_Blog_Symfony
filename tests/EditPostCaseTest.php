@@ -27,68 +27,13 @@ class EditPostCaseTest extends TestCase
         ]);
     }
 
-    public function testPostCreation(): void
+    public function testEditPost(): void
     {
-        $firstUserData = UserHelper::createData();
-        $secondUserData = UserHelper::createData();
+        $firstUser = UserHelper::createUser($this->httpClient);
+        $secondUser = UserHelper::createUser($this->httpClient);
 
-        $response = $this->httpClient->post('register', ['json' => [
-            'first_name'    => $firstUserData->getFirstName(),
-            'last_name'     => $firstUserData->getLastName(),
-            'phone_number'  => $firstUserData->getPhoneNumber(),
-            'email'         => $firstUserData->getEmail(),
-            'country'       => $firstUserData->getCountry(),
-            'town'          => $firstUserData->getTown(),
-            'password'      => [
-                'first'     => $firstUserData->getPassword(),
-                'second'    => $firstUserData->getPassword(),
-            ]
-        ]]);
-
-        $this->assertEquals(201, $response->getStatusCode());
-
-        $firstUser = json_decode($response->getBody()->getContents(), true)['user'];
-
-        $this->assertEquals($firstUserData->getEmail(), $firstUser['email']);
-        $this->assertEquals($firstUserData->getPhoneNumber(), $firstUser['phone_number']);
-
-        $response = $this->httpClient->post('register', ['json' => [
-            'first_name'    => $secondUserData->getFirstName(),
-            'last_name'     => $secondUserData->getLastName(),
-            'phone_number'  => $secondUserData->getPhoneNumber(),
-            'email'         => $secondUserData->getEmail(),
-            'country'       => $secondUserData->getCountry(),
-            'town'          => $secondUserData->getTown(),
-            'password'      => [
-                'first'     => $secondUserData->getPassword(),
-                'second'    => $secondUserData->getPassword(),
-            ]
-        ]]);
-
-        $this->assertEquals(201, $response->getStatusCode());
-
-        $secondUser = json_decode($response->getBody()->getContents(), true)['user'];
-
-        $this->assertEquals($secondUserData->getEmail(), $secondUser['email']);
-        $this->assertEquals($secondUserData->getPhoneNumber(), $secondUser['phone_number']);
-
-        $response = $this->httpClient->post('login', ['json' => [
-            'email'     => $firstUser['email'],
-            'password'  => $firstUserData->getPassword()
-        ]]);
-
-        $this->assertEquals(201, $response->getStatusCode());
-
-        $firstUserLoginToken = json_decode($response->getBody()->getContents(), true)['token'];
-
-        $response = $this->httpClient->post('login', ['json' => [
-            'email'     => $secondUser['email'],
-            'password'  => $secondUserData->getPassword()
-        ]]);
-
-        $this->assertEquals(201, $response->getStatusCode());
-
-        $secondUserLoginToken = json_decode($response->getBody()->getContents(), true)['token'];
+        $firstUserLoginToken = UserHelper::loginUser($firstUser, $this->httpClient);
+        $secondUserLoginToken = UserHelper::loginUser($secondUser, $this->httpClient);
 
         $response = $this->httpClient->post('post/create', [
             'headers' => [

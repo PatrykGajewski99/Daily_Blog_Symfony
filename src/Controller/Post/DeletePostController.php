@@ -38,6 +38,6 @@ class DeletePostController extends AbstractController
         $this->entityManager->remove($post);
         $this->entityManager->flush();
 
-        return new JsonResponse([], 200);
+        return new JsonResponse([], 204);
     }
 }
